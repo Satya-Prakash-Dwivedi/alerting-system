@@ -22,7 +22,8 @@ router.post('/submit', async(req, res) => {
     const now = Date.now();
 
     // Validate Headers (example validation)
-    const token = req.headers['authorizatoin'];
+    const token = req.headers.authorization
+
     if (!token || token !== 'valid-token'){
         failedRequests[ip] = (failedRequests[ip] || []).filter((t) => now - t < TIME_WINDOW);
         failedRequests[ip].push(now);
@@ -32,7 +33,7 @@ router.post('/submit', async(req, res) => {
 
         if(failedRequests[ip].length > THRESHOLD){
             await transporter.sendMail({
-                from : process.env.mail,
+                from : process.env.EMAIL,
                 to : 'dwivedisp62@gmail.com',
                 subject : 'Alert : Too many failed requests',
                 text : `IP ${ip} has exceeded the threshold`,
